@@ -11,19 +11,21 @@ const getUserInfo = async () => {
 const retry = async (func, options) => {
     const retries = (!options?.retries) ? 1 : options.retries;
     let currentTrying = 0;
+    let reason;
 
     while (currentTrying < retries) {
         try {
             return await func();
         } catch (error) {
             console.log(error)
+            reason = error;
         }
         finally {
             currentTrying += 1;
         }
     }
 
-    return null;
+    return Promise.reject(reason);
 }
 
 retry(getUserInfo, { retries: 3 });
