@@ -1,7 +1,6 @@
 "use strict";
 
 //Якщо я правильно зрозуміла постановку задачі, то функцію getUserInfo не можна пепеписувати
-// Тут нема перевірки чи успішним був запит, тому в консоль буде вилітати помилка з fetch
 const getUserInfo = async () => {
     const response = await fetch('/api/for/user');
     const userInfo = await response.json();
@@ -12,12 +11,10 @@ const getUserInfo = async () => {
 const retry = async (func, options) => {
     const retries = (!options?.retries) ? 1 : options.retries;
     let currentTrying = 0;
-    let isSuccessful = false;
 
-    while ((currentTrying < retries) && !isSuccessful) {
+    while (currentTrying < retries) {
         try {
-            let result = await func();
-            isSuccessful = true;
+            return await func();
         } catch (error) {
             console.log(error)
         }
@@ -26,6 +23,8 @@ const retry = async (func, options) => {
         }
     }
 
+    return null;
 }
 
 retry(getUserInfo, { retries: 3 });
+// console.log(retry(getUserInfo, { retries: 3 }))
